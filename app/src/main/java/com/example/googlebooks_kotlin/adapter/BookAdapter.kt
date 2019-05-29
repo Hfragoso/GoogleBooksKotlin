@@ -1,19 +1,25 @@
 package com.example.googlebooks_kotlin.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.googlebooks_kotlin.BookDetailsActivity
 import com.example.googlebooks_kotlin.R
 import com.example.googlebooks_kotlin.model.BookList
 import com.example.googlebooks_kotlin.model.Item
 import com.squareup.picasso.Picasso
 
 class BookAdapter(private var myBookList: BookList?) : RecyclerView.Adapter<BookAdapter.BooksViewHolder>() {
+
+    companion object {
+        val EXTRA_SELECTED_POSITION: String = "com.example.googlebooks.EXTRA_SELECTED_POSITION"
+        val EXTRA_BOOK_LIST = "com.example.googlebooks.EXTRA_BOOK_LIST"
+    }
 
     var indexCounter = 1
 
@@ -35,7 +41,7 @@ class BookAdapter(private var myBookList: BookList?) : RecyclerView.Adapter<Book
     }
 
     override fun onBindViewHolder(holder: BooksViewHolder, position: Int) {
-        holder.bind(myBookList!!.items[position])
+        holder.bind(myBookList!!, position)
     }
 
     class BooksViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -51,7 +57,9 @@ class BookAdapter(private var myBookList: BookList?) : RecyclerView.Adapter<Book
             bookLayout = itemView.findViewById(R.id.bookLayout)
         }
 
-        fun bind(book: Item) {
+        fun bind(bookList: BookList, position: Int) {
+
+            var book = bookList.items[position]
             var imageUrl = book.volumeInfo.imageLinks?.thumbnail
 
             Picasso.get()
@@ -62,7 +70,10 @@ class BookAdapter(private var myBookList: BookList?) : RecyclerView.Adapter<Book
             bookTitleTextView?.text = book.volumeInfo.title
             bookPublishedDateTextView?.text = book.volumeInfo.publishedDate
             bookLayout?.setOnClickListener {
-                Toast.makeText(itemView.context, "Clicked: ${book.id}", Toast.LENGTH_SHORT).show()
+                var intent = Intent(it.context, BookDetailsActivity::class.java)
+                intent.putExtra(EXTRA_SELECTED_POSITION, position)
+//                intent.putExtra(EXTRA_BOOK_LIST, bookList)
+                it.context.startActivity(intent)
             }
         }
     }
