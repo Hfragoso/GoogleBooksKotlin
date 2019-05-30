@@ -6,21 +6,28 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
-import com.example.googlebooks_kotlin.model.BookList
 import com.example.googlebooks_kotlin.model.Item
 import com.squareup.picasso.Picasso
 
-class BookAdapter(private var myBookList: BookList?) : RecyclerView.Adapter<BookAdapter.BooksViewHolder>() {
+class BookAdapter(
+    private var myBookList: MutableList<Item>,
+    private val onClickListener: (myBookList: List<Item>, position: Int) -> Unit
+) :
+    RecyclerView.Adapter<BookAdapter.BooksViewHolder>() {
+
+    companion object {
+        const val EXTRA_SELECTED_POSITION: String = "com.example.googlebooks.EXTRA_SELECTED_POSITION"
+        const val EXTRA_BOOK_LIST = "com.example.googlebooks.EXTRA_BOOK_LIST"
+    }
 
     var indexCounter = 1
 
-    fun updateBookList(newCallData: BookList) {
-        val mergeList = myBookList?.items
-        mergeList?.addAll(newCallData.items)
-        myBookList?.items = mergeList!!
+    fun updateBookList(newCallData: MutableList<Item>) {
+        val mergeList = myBookList
+        mergeList.addAll(newCallData)
+        myBookList = mergeList
         indexCounter++
         notifyDataSetChanged()
     }
@@ -31,11 +38,11 @@ class BookAdapter(private var myBookList: BookList?) : RecyclerView.Adapter<Book
     }
 
     override fun getItemCount(): Int {
-        return myBookList?.items?.size!!
+        return myBookList.size
     }
 
     override fun onBindViewHolder(holder: BooksViewHolder, position: Int) {
-        holder.bind(myBookList!!.items[position])
+        holder.bind(myBookList, position, onClickListener)
     }
 
     class BooksViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -51,18 +58,23 @@ class BookAdapter(private var myBookList: BookList?) : RecyclerView.Adapter<Book
             bookLayout = itemView.findViewById(R.id.bookLayout)
         }
 
-        fun bind(book: Item) {
-            var imageUrl = book.volumeInfo.imageLinks?.thumbnail
-
+        fun bind(
+            bookList: MutableList<Item>,
+            position: Int,
+            onClickListener: (myBookList: List<Item>, position: Int) -> Unit
+        ) {
+            val book = bookList[position]
+            val imageUrl = book.volumeInfo?.imageLinks?.thumbnail
+            //TODO: Convert to extension function(Add extension function to ImageView
             Picasso.get()
                 .load(imageUrl)
                 .placeholder(R.mipmap.ic_launcher)
                 .into(bookThumbnailImageView)
 
-            bookTitleTextView?.text = book.volumeInfo.title
-            bookPublishedDateTextView?.text = book.volumeInfo.publishedDate
+            bookTitleTextView?.text = book.volumeInfo?.title
+            bookPublishedDateTextView?.text = book.volumeInfo?.publishedDate
             bookLayout?.setOnClickListener {
-                Toast.makeText(itemView.context, "Clicked: ${book.id}", Toast.LENGTH_SHORT).show()
+                onClickListener(bookList, position)
             }
         }
     }
