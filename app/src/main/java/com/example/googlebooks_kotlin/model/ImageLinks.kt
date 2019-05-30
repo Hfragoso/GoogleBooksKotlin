@@ -1,9 +1,11 @@
 package com.example.googlebooks_kotlin.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class ImageLinks(
 
     @SerializedName("thumbnail") val thumbnail: String?
-) : Serializable
+) : Parcelable

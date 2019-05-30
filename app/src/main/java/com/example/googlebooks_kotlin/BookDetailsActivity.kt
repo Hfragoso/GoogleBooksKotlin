@@ -27,7 +27,7 @@ class BookDetailsActivity : AppCompatActivity() {
     }
 
     private fun receiveIntent() {
-        bookList = intent.getSerializableExtra(BookAdapter.EXTRA_BOOK_LIST) as List<Item>
+        bookList = intent.getParcelableArrayListExtra(BookAdapter.EXTRA_BOOK_LIST)
         selectedBook = intent.getIntExtra(BookAdapter.EXTRA_SELECTED_POSITION, 0)
     }
 }

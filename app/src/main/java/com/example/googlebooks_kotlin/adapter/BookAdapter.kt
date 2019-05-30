@@ -3,13 +3,11 @@ package com.example.googlebooks_kotlin.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
 import com.example.googlebooks_kotlin.model.Item
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.book_item.view.*
 
 class BookAdapter(
     private var myBookList: MutableList<Item>,
@@ -46,17 +44,6 @@ class BookAdapter(
     }
 
     class BooksViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private var bookThumbnailImageView: ImageView? = null
-        private var bookTitleTextView: TextView? = null
-        private var bookPublishedDateTextView: TextView? = null
-        private var bookLayout: LinearLayout? = null
-
-        init {
-            bookThumbnailImageView = itemView.findViewById(R.id.bookThumbnailImageView)
-            bookTitleTextView = itemView.findViewById(R.id.bookTitleTextView)
-            bookPublishedDateTextView = itemView.findViewById(R.id.bookPublishedDateTextView)
-            bookLayout = itemView.findViewById(R.id.bookLayout)
-        }
 
         fun bind(
             bookList: MutableList<Item>,
@@ -69,11 +56,11 @@ class BookAdapter(
             Picasso.get()
                 .load(imageUrl)
                 .placeholder(R.mipmap.ic_launcher)
-                .into(bookThumbnailImageView)
+                .into(itemView.bookThumbnailImageView)
 
-            bookTitleTextView?.text = book.volumeInfo?.title
-            bookPublishedDateTextView?.text = book.volumeInfo?.publishedDate
-            bookLayout?.setOnClickListener {
+            itemView.bookTitleTextView.text = book.volumeInfo?.title
+            itemView.bookPublishedDateTextView.text = book.volumeInfo?.publishedDate
+            itemView.bookLayout.setOnClickListener {
                 onClickListener(bookList, position)
             }
         }
