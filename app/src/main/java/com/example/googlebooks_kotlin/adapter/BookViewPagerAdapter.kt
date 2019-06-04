@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.viewpager.widget.PagerAdapter
 import com.example.googlebooks_kotlin.R
 import com.example.googlebooks_kotlin.model.Item
@@ -25,10 +26,7 @@ class BookViewPagerAdapter(private val bookList: List<Item>, private val context
         val volumeInfo = bookList[position].volumeInfo
         val imageUrl = volumeInfo?.imageLinks?.thumbnail
 
-        Picasso.get()
-            .load(imageUrl)
-            .placeholder(R.mipmap.ic_launcher)
-            .into(layout.bookCover)
+        Picasso.get().setUpPicasso(imageUrl, layout.bookCover)
 
         layout.bookPublishedDate.text = volumeInfo?.publishedDate
         layout.authors.text = formatAuthors(volumeInfo?.authors)
@@ -51,4 +49,10 @@ class BookViewPagerAdapter(private val bookList: List<Item>, private val context
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
         container.removeView(`object` as View)
     }
+}
+
+private fun Picasso.setUpPicasso(imageUrl: String?, imageView: ImageView) {
+    load(imageUrl)
+        .placeholder(R.mipmap.ic_launcher)
+        .into(imageView)
 }

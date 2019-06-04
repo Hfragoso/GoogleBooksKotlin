@@ -2,22 +2,17 @@ package com.example.googlebooks_kotlin
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.adapter.BookAdapter
-import com.example.googlebooks_kotlin.api.BooksService
-import com.example.googlebooks_kotlin.api.RetrofitClient
 import com.example.googlebooks_kotlin.model.BookList
 import com.example.googlebooks_kotlin.model.Item
 import com.example.googlebooks_kotlin.viewModel.BookListViewModel
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 private const val MAX_RESULTS = 40
 
@@ -36,7 +31,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchBooksLiveDataObserver(index: Int) {
         bookListViewModel.fetchBooks(index, MAX_RESULTS)?.observe(this, Observer { bookList ->
-            loadBooks(index)
+            if (index > 0) {
+                refreshData(bookList)
+            } else {
+                displayBooks(bookList)
+            }
         })
     }
 
@@ -52,25 +51,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         booksRecyclerView.addOnScrollListener(scrollListener)
-    }
-
-    private fun loadBooks(index: Int) {
-        val service = RetrofitClient.getRetrofitInstance()?.create(BooksService::class.java)
-        val call: Call<BookList>? = service?.getBooks(index, MAX_RESULTS)
-        call?.enqueue(object : Callback<BookList> {
-            override fun onFailure(call: Call<BookList>?, t: Throwable?) {
-                Toast.makeText(this@MainActivity, "Error $t", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onResponse(call: Call<BookList>?, response: Response<BookList>?) {
-                if (index > 0) {
-                    refreshData(response?.body())
-                } else {
-                    displayBooks(response?.body())
-                }
-            }
-
-        })
     }
 
     private fun displayBooks(bookList: BookList?) {
