@@ -3,6 +3,7 @@ package com.example.googlebooks_kotlin.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
 import com.example.googlebooks_kotlin.model.Item
@@ -53,10 +54,8 @@ class BookAdapter(
             val book = bookList[position]
             val imageUrl = book.volumeInfo?.imageLinks?.thumbnail
             //TODO: Convert to extension function(Add extension function to ImageView
-            Picasso.get()
-                .load(imageUrl)
-                .placeholder(R.mipmap.ic_launcher)
-                .into(itemView.bookThumbnailImageView)
+            Picasso.get().setUpPicasso(imageUrl, itemView.bookThumbnailImageView)
+
 
             itemView.bookTitleTextView.text = book.volumeInfo?.title
             itemView.bookPublishedDateTextView.text = book.volumeInfo?.publishedDate
@@ -65,4 +64,10 @@ class BookAdapter(
             }
         }
     }
+}
+
+private fun Picasso.setUpPicasso(imageUrl: String?, imageView: ImageView) {
+    load(imageUrl)
+        .placeholder(R.mipmap.ic_launcher)
+        .into(imageView)
 }
