@@ -8,15 +8,23 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.adapter.BookAdapter
+import com.example.googlebooks_kotlin.di.AppComponent
+import com.example.googlebooks_kotlin.di.AppModule
+import com.example.googlebooks_kotlin.di.DaggerAppComponent
+import com.example.googlebooks_kotlin.di.UtilsModule
 import com.example.googlebooks_kotlin.model.BookList
 import com.example.googlebooks_kotlin.model.Item
 import com.example.googlebooks_kotlin.viewModel.BookListViewModel
-import com.squareup.picasso.Picasso
+import com.example.googlebooks_kotlin.viewModel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 private const val MAX_RESULTS = 40
 
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var bookAdapter: BookAdapter
     private lateinit var bookListViewModel: BookListViewModel
@@ -24,8 +32,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val appComponent: AppComponent = initDagger()
+        appComponent.doInjection(this)
         setUpOnScrollListener()
-        bookListViewModel = ViewModelProviders.of(this@MainActivity).get(BookListViewModel::class.java)
+        bookListViewModel = ViewModelProviders.of(this, viewModelFactory)[BookListViewModel::class.java]
         fetchBooksLiveDataObserver(0)
     }
 
@@ -67,4 +77,10 @@ class MainActivity : AppCompatActivity() {
     private fun refreshData(bookList: BookList?) {
         bookAdapter.updateBookList(bookList?.items as MutableList<Item>)
     }
+
+    private fun initDagger(): AppComponent =
+        DaggerAppComponent.builder()
+            .appModule(AppModule(application))
+            .utilsModule(UtilsModule())
+            .build()
 }
