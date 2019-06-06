@@ -8,7 +8,6 @@ import javax.inject.Inject
 
 
 class BookListViewModel @Inject constructor(repository: BooksRepository) : ViewModel() {
-//class BookListViewModel : ViewModel() {
     //    TODO: Move index logic to ViewModel
 
     private val repository = repository

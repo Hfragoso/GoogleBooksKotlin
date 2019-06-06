@@ -18,7 +18,6 @@ class BooksRepository @Inject constructor(booksService: BooksService) {
     }
 
     private fun fetchBooksFromApi(index: Int, maxResults: Int): LiveData<BookList>? {
-//        val service = RetrofitClient.getRetrofitInstance()?.create(BooksService::class.java)
         val call: Call<BookList>? = booksService.getBooks(index, maxResults)
         val data = MutableLiveData<BookList>()
         call?.enqueue(object : Callback<BookList> {
