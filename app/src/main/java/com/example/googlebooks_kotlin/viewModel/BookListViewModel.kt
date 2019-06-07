@@ -3,16 +3,13 @@ package com.example.googlebooks_kotlin.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.googlebooks_kotlin.dataModel.BooksRepository
-import com.example.googlebooks_kotlin.model.BookList
+import com.example.googlebooks_kotlin.dataModel.Status
 import javax.inject.Inject
 
 
-class BookListViewModel @Inject constructor(repository: BooksRepository) : ViewModel() {
-    //    TODO: Move index logic to ViewModel
+class BookListViewModel @Inject constructor(private val repository: BooksRepository) : ViewModel() {
 
-    private val repository = repository
-
-    fun fetchBooks(index: Int, maxResults: Int): LiveData<BookList>? {
+    fun fetchBooks(index: Int, maxResults: Int): LiveData<Status> {
         return repository.fetchBooks(index, maxResults)
     }
 }

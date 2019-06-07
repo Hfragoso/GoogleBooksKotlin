@@ -7,6 +7,6 @@ import retrofit2.http.Query
 
 interface BooksService {
 
-    @GET("volumes?q=android&")
+    @GET("volumes?q=android")
     fun getBooks(@Query("startIndex") index: Int, @Query("maxResults") maxResults: Int): Call<BookList>
 }

@@ -9,27 +9,35 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-class BooksRepository @Inject constructor(booksService: BooksService) {
-    val responseLiveData: MutableLiveData<BookList>? = null
-    private val booksService = booksService
+class BooksRepository @Inject constructor(private val booksService: BooksService) {
+    val responseLiveData: MutableLiveData<Status> = MutableLiveData()
 
-    fun fetchBooks(index: Int, maxResults: Int): LiveData<BookList>? {
+    fun fetchBooks(index: Int, maxResults: Int): LiveData<Status> {
         return fetchBooksFromApi(index, maxResults)
     }
 
-    private fun fetchBooksFromApi(index: Int, maxResults: Int): LiveData<BookList>? {
+    private fun fetchBooksFromApi(index: Int, maxResults: Int): LiveData<Status> {
+        responseLiveData.value = Status.Loading
         val call: Call<BookList>? = booksService.getBooks(index, maxResults)
-        val data = MutableLiveData<BookList>()
         call?.enqueue(object : Callback<BookList> {
             override fun onFailure(call: Call<BookList>?, t: Throwable?) {
-                responseLiveData?.apply { postValue(null) }
+                t?.let {
+                    responseLiveData.value = Status.Error(it)
+                }
             }
 
             override fun onResponse(call: Call<BookList>?, response: Response<BookList>?) {
-                data.value = response?.body()
+                response?.body()?.let {
+                    responseLiveData.value = Status.Success(it)
+                }
             }
         })
-
-        return data
+        return responseLiveData
     }
+}
+
+sealed class Status {
+    object Loading : Status()
+    data class Error(val throwable: Throwable) : Status()
+    data class Success(val data: BookList) : Status()
 }
