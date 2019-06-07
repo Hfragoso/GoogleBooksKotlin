@@ -2,12 +2,14 @@ package com.example.googlebooks_kotlin
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.adapter.BookAdapter
+import com.example.googlebooks_kotlin.dataModel.Status
 import com.example.googlebooks_kotlin.di.AppComponent
 import com.example.googlebooks_kotlin.di.AppModule
 import com.example.googlebooks_kotlin.di.DaggerAppComponent
@@ -26,6 +28,8 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+//    TODO: Inject adapter under activity's scope
+
     private lateinit var bookAdapter: BookAdapter
     private lateinit var bookListViewModel: BookListViewModel
 
@@ -40,13 +44,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchBooksLiveDataObserver(index: Int) {
-        bookListViewModel.fetchBooks(index, MAX_RESULTS)?.observe(this, Observer { bookList ->
-            if (index > 0) {
-                refreshData(bookList)
-            } else {
-                displayBooks(bookList)
+        bookListViewModel.fetchBooks(index, MAX_RESULTS).observe(this, Observer { status ->
+            when (status) {
+                is Status.Loading -> showProgressBar()
+                is Status.Success -> handleBooks(status.data, index)
+                is Status.Error -> showError(status.throwable)
             }
         })
+    }
+
+    private fun showError(throwable: Throwable) {
+        Toast.makeText(this@MainActivity, "Error: ${throwable.message}", Toast.LENGTH_LONG).show()
+    }
+
+    private fun handleBooks(data: BookList, index: Int) {
+        if (index > 0) {
+            refreshData(data)
+        } else {
+            displayBooks(data)
+        }
+    }
+
+    private fun showProgressBar() {
+        Toast.makeText(this@MainActivity, "Loading", Toast.LENGTH_LONG).show()
     }
 
     private fun setUpOnScrollListener() {

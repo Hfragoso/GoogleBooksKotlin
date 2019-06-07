@@ -11,7 +11,7 @@ class BookDetailsActivity : AppCompatActivity() {
 
     private lateinit var bookViewPagerAdapter: BookViewPagerAdapter
     private lateinit var bookList: List<Item>
-    var selectedBook: Int = 0
+    private var selectedBook: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
