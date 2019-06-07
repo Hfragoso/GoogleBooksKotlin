@@ -1,9 +1,10 @@
-package com.example.googlebooks_kotlin.dataModel
+package com.example.googlebooks_kotlin.bookslanding.datamodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.googlebooks_kotlin.api.BooksService
-import com.example.googlebooks_kotlin.model.BookList
+import com.example.googlebooks_kotlin.utils.BooksService
+import com.example.googlebooks_kotlin.entities.BookList
+import com.example.googlebooks_kotlin.utils.Status
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,10 +35,4 @@ class BooksRepository @Inject constructor(private val booksService: BooksService
         })
         return responseLiveData
     }
-}
-
-sealed class Status {
-    object Loading : Status()
-    data class Error(val throwable: Throwable) : Status()
-    data class Success(val data: BookList) : Status()
 }

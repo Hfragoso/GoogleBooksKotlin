@@ -1,4 +1,4 @@
-package com.example.googlebooks_kotlin
+package com.example.googlebooks_kotlin.bookslanding.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,16 +8,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.googlebooks_kotlin.adapter.BookAdapter
-import com.example.googlebooks_kotlin.dataModel.Status
+import com.example.googlebooks_kotlin.R
+import com.example.googlebooks_kotlin.bookdetails.view.BookDetailsActivity
+import com.example.googlebooks_kotlin.bookslanding.adapter.BooksAdapter
+import com.example.googlebooks_kotlin.bookslanding.viewmodel.BookListViewModel
 import com.example.googlebooks_kotlin.di.AppComponent
 import com.example.googlebooks_kotlin.di.AppModule
 import com.example.googlebooks_kotlin.di.DaggerAppComponent
 import com.example.googlebooks_kotlin.di.UtilsModule
-import com.example.googlebooks_kotlin.model.BookList
-import com.example.googlebooks_kotlin.model.Item
-import com.example.googlebooks_kotlin.viewModel.BookListViewModel
-import com.example.googlebooks_kotlin.viewModel.ViewModelFactory
+import com.example.googlebooks_kotlin.entities.BookList
+import com.example.googlebooks_kotlin.entities.Item
+import com.example.googlebooks_kotlin.utils.Status
+import com.example.googlebooks_kotlin.utils.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -30,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
 //    TODO: Inject adapter under activity's scope
 
-    private lateinit var bookAdapter: BookAdapter
+    private lateinit var booksAdapter: BooksAdapter
     private lateinit var bookListViewModel: BookListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1)) {
-                    val index = bookAdapter.indexCounter
+                    val index = booksAdapter.indexCounter
                     fetchBooksLiveDataObserver(index)
                 }
             }
@@ -84,18 +86,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayBooks(bookList: BookList?) {
-        bookAdapter = BookAdapter(bookList?.items as MutableList<Item>) { adapterBookList, position ->
-            val intent = Intent(this@MainActivity, BookDetailsActivity::class.java)
-            intent.putExtra(BookAdapter.EXTRA_SELECTED_POSITION, position)
-            intent.putExtra(BookAdapter.EXTRA_BOOK_LIST, adapterBookList as ArrayList<Item>)
-            startActivity(intent)
-        }
+        booksAdapter =
+            BooksAdapter(bookList?.items as MutableList<Item>) { adapterBookList, position ->
+                val intent = Intent(this@MainActivity, BookDetailsActivity::class.java)
+                intent.putExtra(
+                    BooksAdapter.EXTRA_SELECTED_POSITION,
+                    position
+                )
+                intent.putExtra(
+                    BooksAdapter.EXTRA_BOOK_LIST,
+                    adapterBookList as ArrayList<Item>
+                )
+                startActivity(intent)
+            }
         booksRecyclerView.layoutManager = GridLayoutManager(this, 3)
-        booksRecyclerView.adapter = bookAdapter
+        booksRecyclerView.adapter = booksAdapter
     }
 
     private fun refreshData(bookList: BookList?) {
-        bookAdapter.updateBookList(bookList?.items as MutableList<Item>)
+        booksAdapter.updateBookList(bookList?.items as MutableList<Item>)
     }
 
     private fun initDagger(): AppComponent =

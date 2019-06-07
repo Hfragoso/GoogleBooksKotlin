@@ -1,10 +1,10 @@
 package com.example.googlebooks_kotlin.di
 
 import androidx.lifecycle.ViewModelProvider
-import com.example.googlebooks_kotlin.api.BooksService
-import com.example.googlebooks_kotlin.dataModel.BooksRepository
+import com.example.googlebooks_kotlin.utils.BooksService
+import com.example.googlebooks_kotlin.bookslanding.datamodel.BooksRepository
 import com.example.googlebooks_kotlin.utils.Constants.BASE_URL
-import com.example.googlebooks_kotlin.viewModel.ViewModelFactory
+import com.example.googlebooks_kotlin.utils.ViewModelFactory
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

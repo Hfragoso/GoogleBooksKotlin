@@ -1,4 +1,4 @@
-package com.example.googlebooks_kotlin.adapter
+package com.example.googlebooks_kotlin.bookdetails.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
 import com.example.googlebooks_kotlin.R
-import com.example.googlebooks_kotlin.extensions.loadImage
-import com.example.googlebooks_kotlin.model.Item
+import com.example.googlebooks_kotlin.utils.loadImage
+import com.example.googlebooks_kotlin.entities.Item
 import kotlinx.android.synthetic.main.book_detail_page.view.*
 
-class BookViewPagerAdapter(private val bookList: List<Item>, private val context: Context) : PagerAdapter() {
+class DetailsAdapter(private val bookList: List<Item>, private val context: Context) : PagerAdapter() {
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view === `object`
     }
