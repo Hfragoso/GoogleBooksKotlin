@@ -1,8 +1,9 @@
-package com.example.googlebooks_kotlin.viewModel
+package com.example.googlebooks_kotlin.utils
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.googlebooks_kotlin.dataModel.BooksRepository
+import com.example.googlebooks_kotlin.bookslanding.viewmodel.BookListViewModel
+import com.example.googlebooks_kotlin.bookslanding.datamodel.BooksRepository
 import javax.inject.Inject
 
 class ViewModelFactory @Inject

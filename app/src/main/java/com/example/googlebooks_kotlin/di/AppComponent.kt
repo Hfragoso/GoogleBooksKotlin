@@ -1,6 +1,6 @@
 package com.example.googlebooks_kotlin.di
 
-import com.example.googlebooks_kotlin.MainActivity
+import com.example.googlebooks_kotlin.bookslanding.view.MainActivity
 import dagger.Component
 import javax.inject.Singleton
 

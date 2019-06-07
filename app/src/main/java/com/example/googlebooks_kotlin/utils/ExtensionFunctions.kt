@@ -1,4 +1,4 @@
-package com.example.googlebooks_kotlin.extensions
+package com.example.googlebooks_kotlin.utils
 
 import android.widget.ImageView
 import com.example.googlebooks_kotlin.R
