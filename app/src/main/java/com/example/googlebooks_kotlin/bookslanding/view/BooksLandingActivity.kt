@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
 import com.example.googlebooks_kotlin.bookslanding.adapter.BooksAdapter
 import com.example.googlebooks_kotlin.bookslanding.viewmodel.BookListViewModel
-import com.example.googlebooks_kotlin.di.modules.ContextModule
 import com.example.googlebooks_kotlin.entities.BookList
 import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.utils.App
@@ -26,9 +25,7 @@ class BooksLandingActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    @Inject
     lateinit var booksAdapter: BooksAdapter
-//    TODO: Inject adapter under activity's scope
 
     private lateinit var bookListViewModel: BookListViewModel
 
@@ -37,9 +34,10 @@ class BooksLandingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         var component = App.getApplication(this).component
         component.doInjection(this)
-//        component.adapterSubcomponentBuilder()
-//            .ContextModule(ContextModule(application))
-//            .build()
+        booksAdapter = component
+            .adapterSubcomponentBuilder()
+            .build()
+            .buildAdapter()
         setUpOnScrollListener()
         bookListViewModel = ViewModelProviders.of(this, viewModelFactory)[BookListViewModel::class.java]
         setUpRecyclerView()

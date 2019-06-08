@@ -4,14 +4,14 @@ import android.content.Context
 import android.content.Intent
 import com.example.googlebooks_kotlin.bookdetails.view.BookDetailsActivity
 import com.example.googlebooks_kotlin.bookslanding.adapter.BooksAdapter
+import com.example.googlebooks_kotlin.di.scopes.Activity
 import com.example.googlebooks_kotlin.entities.Item
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 class AdapterModule {
-    @Singleton
+    @Activity
     @Provides
     fun provideAdapter(context: Context): BooksAdapter {
         return BooksAdapter { adapterBookList, position ->
