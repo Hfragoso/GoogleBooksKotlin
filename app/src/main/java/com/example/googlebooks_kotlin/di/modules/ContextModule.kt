@@ -1,14 +1,12 @@
-package com.example.googlebooks_kotlin.di
+package com.example.googlebooks_kotlin.di.modules
 
 import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
-class AppModule(private val app: Application) {
+class ContextModule(private val app: Application) {
     @Provides
-    @Singleton
     fun provideContext(): Context = app
 }

@@ -5,12 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
-import com.example.googlebooks_kotlin.utils.loadImage
 import com.example.googlebooks_kotlin.entities.Item
+import com.example.googlebooks_kotlin.utils.loadImage
 import kotlinx.android.synthetic.main.book_item.view.*
 
 class BooksAdapter(
-    private var myBookList: MutableList<Item>,
     private val onClickListener: (myBookList: List<Item>, position: Int) -> Unit
 ) :
     RecyclerView.Adapter<BooksAdapter.BooksViewHolder>() {
@@ -20,11 +19,13 @@ class BooksAdapter(
         const val EXTRA_BOOK_LIST = "com.example.googlebooks.EXTRA_BOOK_LIST"
     }
 
-    var indexCounter = 1
+    private var myBookList: MutableList<Item> = mutableListOf()
 
-    fun updateBookList(newCallData: MutableList<Item>) {
+    var indexCounter = 0
+
+    fun updateBookList(data: MutableList<Item>) {
         val mergeList = myBookList
-        mergeList.addAll(newCallData)
+        mergeList.addAll(data)
         myBookList = mergeList
         indexCounter++
         notifyDataSetChanged()
