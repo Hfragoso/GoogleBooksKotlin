@@ -57,10 +57,10 @@ dependencies {
     //Picasso
     implementation "com.squareup.picasso:picasso:2.71828"
 
-    //    Dagger 2
+    //Dagger 2
     implementation 'com.google.dagger:dagger:2.13'
     kapt 'com.google.dagger:dagger-compiler:2.13'
 
-//    Singleton
+    //Singleton
     compileOnly 'javax.annotation:jsr250-api:1.0'
 }

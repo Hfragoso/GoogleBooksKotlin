@@ -12,12 +12,9 @@ import com.example.googlebooks_kotlin.R
 import com.example.googlebooks_kotlin.bookdetails.view.BookDetailsActivity
 import com.example.googlebooks_kotlin.bookslanding.adapter.BooksAdapter
 import com.example.googlebooks_kotlin.bookslanding.viewmodel.BookListViewModel
-import com.example.googlebooks_kotlin.di.AppComponent
-import com.example.googlebooks_kotlin.di.AppModule
-import com.example.googlebooks_kotlin.di.DaggerAppComponent
-import com.example.googlebooks_kotlin.di.UtilsModule
 import com.example.googlebooks_kotlin.entities.BookList
 import com.example.googlebooks_kotlin.entities.Item
+import com.example.googlebooks_kotlin.utils.App
 import com.example.googlebooks_kotlin.utils.Status
 import com.example.googlebooks_kotlin.utils.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
@@ -25,7 +22,7 @@ import javax.inject.Inject
 
 private const val MAX_RESULTS = 40
 
-class MainActivity : AppCompatActivity() {
+class BooksLandingActivity : AppCompatActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -38,8 +35,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val appComponent: AppComponent = initDagger()
-        appComponent.doInjection(this)
+        App.getApplication(this).component.doInjection(this)
         setUpOnScrollListener()
         bookListViewModel = ViewModelProviders.of(this, viewModelFactory)[BookListViewModel::class.java]
         fetchBooksLiveDataObserver(0)
@@ -56,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showError(throwable: Throwable) {
-        Toast.makeText(this@MainActivity, "Error: ${throwable.message}", Toast.LENGTH_LONG).show()
+        Toast.makeText(this@BooksLandingActivity, "Error: ${throwable.message}", Toast.LENGTH_LONG).show()
     }
 
     private fun handleBooks(data: BookList, index: Int) {
@@ -68,7 +64,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showProgressBar() {
-        Toast.makeText(this@MainActivity, "Loading", Toast.LENGTH_LONG).show()
+        Toast.makeText(this@BooksLandingActivity, "Loading", Toast.LENGTH_LONG).show()
     }
 
     private fun setUpOnScrollListener() {
@@ -88,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     private fun displayBooks(bookList: BookList?) {
         booksAdapter =
             BooksAdapter(bookList?.items as MutableList<Item>) { adapterBookList, position ->
-                val intent = Intent(this@MainActivity, BookDetailsActivity::class.java)
+                val intent = Intent(this@BooksLandingActivity, BookDetailsActivity::class.java)
                 intent.putExtra(
                     BooksAdapter.EXTRA_SELECTED_POSITION,
                     position
@@ -106,10 +102,4 @@ class MainActivity : AppCompatActivity() {
     private fun refreshData(bookList: BookList?) {
         booksAdapter.updateBookList(bookList?.items as MutableList<Item>)
     }
-
-    private fun initDagger(): AppComponent =
-        DaggerAppComponent.builder()
-            .appModule(AppModule(application))
-            .utilsModule(UtilsModule())
-            .build()
 }
