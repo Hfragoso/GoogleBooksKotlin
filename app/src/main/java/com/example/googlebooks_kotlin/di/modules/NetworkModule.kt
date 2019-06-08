@@ -1,6 +1,5 @@
 package com.example.googlebooks_kotlin.di.modules
 
-import com.example.googlebooks_kotlin.di.scopes.Application
 import com.example.googlebooks_kotlin.utils.BooksService
 import com.example.googlebooks_kotlin.utils.Constants.BASE_URL
 import com.google.gson.FieldNamingPolicy
@@ -12,17 +11,18 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
 
 @Module
 class NetworkModule {
-    @Application
+    @Singleton
     @Provides
     fun provideGson(): Gson {
         val builder = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         return builder.setLenient().create()
     }
 
-    @Application
+    @Singleton
     @Provides
     fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
@@ -32,20 +32,20 @@ class NetworkModule {
             .build()
     }
 
-    @Application
+    @Singleton
     @Provides
     fun getApiCallInterface(retrofit: Retrofit): BooksService {
         return retrofit.create(BooksService::class.java)
     }
 
-    @Application
+    @Singleton
     @Provides
     fun getHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor).build()
     }
 
-    @Application
+    @Singleton
     @Provides
     fun getHttpLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
