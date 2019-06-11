@@ -64,10 +64,10 @@ dependencies {
     //Singleton
     compileOnly 'javax.annotation:jsr250-api:1.0'
 
-    def roomVersion = '2.1.0-rc01'
+    def roomVersion = '2.0.0'
     //Room
     implementation "androidx.room:room-runtime:$roomVersion"
-    implementation "androidx.room:room-ktx:$roomVersion"
+//    implementation "androidx.room:room-ktx:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
     androidTestImplementation "androidx.room:room-testing:$roomVersion"
 }
