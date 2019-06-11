@@ -1,7 +1,10 @@
 package com.example.googlebooks_kotlin.bookslanding.datamodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.googlebooks_kotlin.database.BookDao
+import com.example.googlebooks_kotlin.database.BookRoomDatabase
 import com.example.googlebooks_kotlin.entities.BookList
 import com.example.googlebooks_kotlin.utils.BooksService
 import com.example.googlebooks_kotlin.utils.Status
@@ -10,7 +13,11 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-class BooksRepository @Inject constructor(private val booksService: BooksService) {
+class BooksRepository @Inject constructor(
+    private val booksService: BooksService,
+    private val bookRoomDatabase: BookRoomDatabase,
+    private val bookDao: BookDao
+) {
     val responseLiveData: MutableLiveData<Status> = MutableLiveData()
 
     fun fetchBooks(index: Int, maxResults: Int): LiveData<Status> {
