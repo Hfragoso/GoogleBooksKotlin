@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
 import com.example.googlebooks_kotlin.bookslanding.adapter.BooksAdapter
 import com.example.googlebooks_kotlin.bookslanding.viewmodel.BookListViewModel
-import com.example.googlebooks_kotlin.entities.BookList
 import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.utils.App
 import com.example.googlebooks_kotlin.utils.Status
@@ -63,7 +62,7 @@ class BooksLandingActivity : AppCompatActivity() {
         Toast.makeText(this@BooksLandingActivity, "Error: ${throwable.message}", Toast.LENGTH_LONG).show()
     }
 
-    private fun handleBooks(data: BookList) {
+    private fun handleBooks(data: List<Item>) {
         setData(data)
     }
 
@@ -85,7 +84,7 @@ class BooksLandingActivity : AppCompatActivity() {
         booksRecyclerView.addOnScrollListener(scrollListener)
     }
 
-    private fun setData(bookList: BookList?) {
-        booksAdapter.updateBookList(bookList?.items as MutableList<Item>)
+    private fun setData(data: List<Item>) {
+        booksAdapter.updateBookList(data as MutableList<Item>)
     }
 }

@@ -2,8 +2,8 @@ package com.example.googlebooks_kotlin.bookslanding.datamodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.googlebooks_kotlin.utils.BooksService
 import com.example.googlebooks_kotlin.entities.BookList
+import com.example.googlebooks_kotlin.utils.BooksService
 import com.example.googlebooks_kotlin.utils.Status
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,7 +28,7 @@ class BooksRepository @Inject constructor(private val booksService: BooksService
             }
 
             override fun onResponse(call: Call<BookList>?, response: Response<BookList>?) {
-                response?.body()?.let {
+                response?.body()?.items?.let {
                     responseLiveData.value = Status.Success(it)
                 }
             }

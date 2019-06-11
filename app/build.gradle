@@ -35,9 +35,9 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.core:core-ktx:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
+    implementation 'androidx.core:core-ktx:1.2.0-alpha01'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     testImplementation 'junit:junit:4.12'
@@ -45,22 +45,29 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     // retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
 
     //Logging
-    implementation "com.squareup.okhttp3:logging-interceptor:3.14.2"
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.0.0-alpha02'
 
     //RecyclerView
-    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha06'
 
     //Picasso
     implementation "com.squareup.picasso:picasso:2.71828"
 
     //Dagger 2
-    implementation 'com.google.dagger:dagger:2.13'
-    kapt 'com.google.dagger:dagger-compiler:2.13'
+    implementation 'com.google.dagger:dagger:2.23.1'
+    kapt 'com.google.dagger:dagger-compiler:2.23.1'
 
     //Singleton
     compileOnly 'javax.annotation:jsr250-api:1.0'
+
+    def roomVersion = '2.1.0-rc01'
+    //Room
+    implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    androidTestImplementation "androidx.room:room-testing:$roomVersion"
 }

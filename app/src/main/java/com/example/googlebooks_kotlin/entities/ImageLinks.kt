@@ -8,4 +8,6 @@ import kotlinx.android.parcel.Parcelize
 data class ImageLinks(
 
     @SerializedName("thumbnail") val thumbnail: String?
-) : Parcelable
+) : Parcelable {
+    constructor() : this("")
+}

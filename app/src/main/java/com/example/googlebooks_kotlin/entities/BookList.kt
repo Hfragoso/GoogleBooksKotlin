@@ -1,6 +1,7 @@
 package com.example.googlebooks_kotlin.entities
 
 import android.os.Parcelable
+import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
