@@ -41,7 +41,10 @@ class DetailsAdapter(private val bookList: List<Item>, private val context: Cont
             result = result.plus("$author, ")
         }
 
-        return result.substring(0, result.length - 2)
+        return if (result.isNotEmpty())
+            result.substring(0, result.length - 2)
+        else
+            ""
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {

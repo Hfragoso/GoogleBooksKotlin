@@ -1,11 +1,11 @@
 package com.example.googlebooks_kotlin.bookslanding.datamodel
 
-import android.util.Log
-import androidx.lifecycle.LiveData
+import android.os.AsyncTask
 import androidx.lifecycle.MutableLiveData
 import com.example.googlebooks_kotlin.database.BookDao
 import com.example.googlebooks_kotlin.database.BookRoomDatabase
 import com.example.googlebooks_kotlin.entities.BookList
+import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.utils.BooksService
 import com.example.googlebooks_kotlin.utils.Status
 import retrofit2.Call
@@ -15,16 +15,23 @@ import javax.inject.Inject
 
 class BooksRepository @Inject constructor(
     private val booksService: BooksService,
-    private val bookRoomDatabase: BookRoomDatabase,
     private val bookDao: BookDao
 ) {
     val responseLiveData: MutableLiveData<Status> = MutableLiveData()
 
-    fun fetchBooks(index: Int, maxResults: Int): LiveData<Status> {
-        return fetchBooksFromApi(index, maxResults)
+    fun fetchBooks(index: Int, maxResults: Int) {
+        fetchBooksFromRoomDB(index, maxResults)
+        fetchBooksFromApi(index, maxResults)
     }
 
-    private fun fetchBooksFromApi(index: Int, maxResults: Int): LiveData<Status> {
+    private fun fetchBooksFromRoomDB(index: Int, maxResults: Int) {
+        bookDao.allBooks.observeForever {
+            if (it.isNotEmpty())
+                responseLiveData.value = Status.Success(it)
+        }
+    }
+
+    private fun fetchBooksFromApi(index: Int, maxResults: Int) {
         responseLiveData.value = Status.Loading
         val call: Call<BookList>? = booksService.getBooks(index, maxResults)
         call?.enqueue(object : Callback<BookList> {
@@ -36,10 +43,22 @@ class BooksRepository @Inject constructor(
 
             override fun onResponse(call: Call<BookList>?, response: Response<BookList>?) {
                 response?.body()?.items?.let {
-                    responseLiveData.value = Status.Success(it)
+                    InsertAsyncTask(bookDao).execute(it)
                 }
             }
         })
-        return responseLiveData
+    }
+
+    companion object {
+        private class InsertAsyncTask(private val bookDao: BookDao) :
+            AsyncTask<List<Item>, Void, Void>() {
+            override fun doInBackground(vararg bookList: List<Item>?): Void? {
+                bookList[0]?.forEach {
+                    bookDao.insert(it)
+                }
+
+                return null
+            }
+        }
     }
 }

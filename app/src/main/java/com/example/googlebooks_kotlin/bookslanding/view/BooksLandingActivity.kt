@@ -17,7 +17,7 @@ import com.example.googlebooks_kotlin.utils.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-private const val MAX_RESULTS = 40
+const val MAX_RESULTS = 40
 
 class BooksLandingActivity : AppCompatActivity() {
 
@@ -39,8 +39,20 @@ class BooksLandingActivity : AppCompatActivity() {
             .buildAdapter()
         setUpOnScrollListener()
         bookListViewModel = ViewModelProviders.of(this, viewModelFactory)[BookListViewModel::class.java]
+        setUpBooksObserver()
         setUpRecyclerView()
-        fetchBooksLiveDataObserver(0)
+        val index = booksAdapter.indexCounter
+        fetchBooksLiveDataObserver(index)
+    }
+
+    private fun setUpBooksObserver() {
+        bookListViewModel.booksData?.observe(this, Observer { status ->
+            when (status) {
+                is Status.Loading -> showProgressBar()
+                is Status.Success -> handleBooks(status.data)
+                is Status.Error -> showError(status.throwable)
+            }
+        })
     }
 
     private fun setUpRecyclerView() {
@@ -49,13 +61,7 @@ class BooksLandingActivity : AppCompatActivity() {
     }
 
     private fun fetchBooksLiveDataObserver(index: Int) {
-        bookListViewModel.fetchBooks(index, MAX_RESULTS).observe(this, Observer { status ->
-            when (status) {
-                is Status.Loading -> showProgressBar()
-                is Status.Success -> handleBooks(status.data)
-                is Status.Error -> showError(status.throwable)
-            }
-        })
+        bookListViewModel.fetchBooks(index, MAX_RESULTS)
     }
 
     private fun showError(throwable: Throwable) {

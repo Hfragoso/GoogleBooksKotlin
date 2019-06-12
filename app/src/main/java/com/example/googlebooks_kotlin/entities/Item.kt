@@ -15,6 +15,5 @@ data class Item(
     @SerializedName("id")
     val id: String,
     @SerializedName("volumeInfo")
-//    @TypeConverters(VolumeInfoTypeConverter::class)
     val volumeInfo: VolumeInfo?
 ) : Parcelable

@@ -24,9 +24,7 @@ class BooksAdapter(
     var indexCounter = 0
 
     fun updateBookList(data: MutableList<Item>) {
-        val mergeList = myBookList
-        mergeList.addAll(data)
-        myBookList = mergeList
+        myBookList = data
         indexCounter++
         notifyDataSetChanged()
     }

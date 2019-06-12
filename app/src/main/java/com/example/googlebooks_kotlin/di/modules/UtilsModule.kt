@@ -1,13 +1,11 @@
 package com.example.googlebooks_kotlin.di.modules
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.example.googlebooks_kotlin.bookslanding.datamodel.BooksRepository
 import com.example.googlebooks_kotlin.database.BookDao
 import com.example.googlebooks_kotlin.database.BookRoomDatabase
-import com.example.googlebooks_kotlin.di.scopes.Activity
 import com.example.googlebooks_kotlin.utils.BooksService
 import com.example.googlebooks_kotlin.utils.ViewModelFactory
 import dagger.Module
@@ -20,10 +18,9 @@ class UtilsModule {
     @Provides
     fun getRepository(
         booksService: BooksService,
-        bookRoomDatabase: BookRoomDatabase,
         bookDao: BookDao
     ): BooksRepository {
-        return BooksRepository(booksService, bookRoomDatabase, bookDao)
+        return BooksRepository(booksService, bookDao)
     }
 
     @Singleton
