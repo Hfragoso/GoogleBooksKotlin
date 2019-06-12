@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
 import com.example.googlebooks_kotlin.bookslanding.adapter.BooksAdapter
 import com.example.googlebooks_kotlin.bookslanding.viewmodel.BookListViewModel
-import com.example.googlebooks_kotlin.entities.BookList
 import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.utils.App
 import com.example.googlebooks_kotlin.utils.Status
@@ -18,7 +17,7 @@ import com.example.googlebooks_kotlin.utils.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-private const val MAX_RESULTS = 40
+const val MAX_RESULTS = 40
 
 class BooksLandingActivity : AppCompatActivity() {
 
@@ -40,17 +39,14 @@ class BooksLandingActivity : AppCompatActivity() {
             .buildAdapter()
         setUpOnScrollListener()
         bookListViewModel = ViewModelProviders.of(this, viewModelFactory)[BookListViewModel::class.java]
+        setUpBooksObserver()
         setUpRecyclerView()
-        fetchBooksLiveDataObserver(0)
+        val index = booksAdapter.indexCounter
+        fetchBooksLiveDataObserver(index)
     }
 
-    private fun setUpRecyclerView() {
-        booksRecyclerView.layoutManager = GridLayoutManager(this, 3)
-        booksRecyclerView.adapter = booksAdapter
-    }
-
-    private fun fetchBooksLiveDataObserver(index: Int) {
-        bookListViewModel.fetchBooks(index, MAX_RESULTS).observe(this, Observer { status ->
+    private fun setUpBooksObserver() {
+        bookListViewModel.booksData?.observe(this, Observer { status ->
             when (status) {
                 is Status.Loading -> showProgressBar()
                 is Status.Success -> handleBooks(status.data)
@@ -59,11 +55,20 @@ class BooksLandingActivity : AppCompatActivity() {
         })
     }
 
+    private fun setUpRecyclerView() {
+        booksRecyclerView.layoutManager = GridLayoutManager(this, 3)
+        booksRecyclerView.adapter = booksAdapter
+    }
+
+    private fun fetchBooksLiveDataObserver(index: Int) {
+        bookListViewModel.fetchBooks(index, MAX_RESULTS)
+    }
+
     private fun showError(throwable: Throwable) {
         Toast.makeText(this@BooksLandingActivity, "Error: ${throwable.message}", Toast.LENGTH_LONG).show()
     }
 
-    private fun handleBooks(data: BookList) {
+    private fun handleBooks(data: List<Item>) {
         setData(data)
     }
 
@@ -85,7 +90,7 @@ class BooksLandingActivity : AppCompatActivity() {
         booksRecyclerView.addOnScrollListener(scrollListener)
     }
 
-    private fun setData(bookList: BookList?) {
-        booksAdapter.updateBookList(bookList?.items as MutableList<Item>)
+    private fun setData(data: List<Item>) {
+        booksAdapter.updateBookList(data as MutableList<Item>)
     }
 }

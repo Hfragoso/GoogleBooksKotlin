@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
 import com.example.googlebooks_kotlin.R
-import com.example.googlebooks_kotlin.utils.loadImage
 import com.example.googlebooks_kotlin.entities.Item
+import com.example.googlebooks_kotlin.utils.loadImage
 import kotlinx.android.synthetic.main.book_detail_page.view.*
 
 class DetailsAdapter(private val bookList: List<Item>, private val context: Context) : PagerAdapter() {
@@ -41,7 +41,10 @@ class DetailsAdapter(private val bookList: List<Item>, private val context: Cont
             result = result.plus("$author, ")
         }
 
-        return result.substring(0, result.length - 2)
+        return if (result.isNotEmpty())
+            result.substring(0, result.length - 2)
+        else
+            ""
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
