@@ -48,6 +48,6 @@ class NetworkModule {
     @Singleton
     @Provides
     fun getHttpLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)
     }
 }

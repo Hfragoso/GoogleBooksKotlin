@@ -39,14 +39,29 @@ class BooksLandingActivity : AppCompatActivity() {
             .buildAdapter()
         setUpOnScrollListener()
         bookListViewModel = ViewModelProviders.of(this, viewModelFactory)[BookListViewModel::class.java]
+        setuUpSearchView()
         setUpBooksObserver()
         setUpRecyclerView()
-        val index = booksAdapter.indexCounter
-        fetchBooksLiveDataObserver(index)
+    }
+
+    private fun setuUpSearchView() {
+        search_bar.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    bookListViewModel.fetchBooks(query, 0, MAX_RESULTS)
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+
+        })
     }
 
     private fun setUpBooksObserver() {
-        bookListViewModel.booksData?.observe(this, Observer { status ->
+        bookListViewModel.booksData.observe(this, Observer { status ->
             when (status) {
                 is Status.Loading -> showProgressBar()
                 is Status.Success -> handleBooks(status.data)
@@ -61,7 +76,7 @@ class BooksLandingActivity : AppCompatActivity() {
     }
 
     private fun fetchBooksLiveDataObserver(index: Int) {
-        bookListViewModel.fetchBooks(index, MAX_RESULTS)
+        bookListViewModel.fetchBooks(search_bar.query.toString(), index, MAX_RESULTS)
     }
 
     private fun showError(throwable: Throwable) {
@@ -69,7 +84,7 @@ class BooksLandingActivity : AppCompatActivity() {
     }
 
     private fun handleBooks(data: List<Item>) {
-        setData(data)
+        setAdapterData(data)
     }
 
     private fun showProgressBar() {
@@ -78,19 +93,21 @@ class BooksLandingActivity : AppCompatActivity() {
 
     private fun setUpOnScrollListener() {
         val scrollListener = object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (!recyclerView.canScrollVertically(1)) {
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_INDICATOR_BOTTOM) {
                     val index = booksAdapter.indexCounter
                     fetchBooksLiveDataObserver(index)
                 }
+
             }
         }
 
         booksRecyclerView.addOnScrollListener(scrollListener)
     }
 
-    private fun setData(data: List<Item>) {
+    private fun setAdapterData(data: List<Item>) {
         booksAdapter.updateBookList(data as MutableList<Item>)
     }
 }
