@@ -3,7 +3,6 @@ package com.example.googlebooks_kotlin.bookslanding.datamodel
 import android.os.AsyncTask
 import androidx.lifecycle.MutableLiveData
 import com.example.googlebooks_kotlin.database.BookDao
-import com.example.googlebooks_kotlin.database.BookRoomDatabase
 import com.example.googlebooks_kotlin.entities.BookList
 import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.utils.BooksService
@@ -19,9 +18,16 @@ class BooksRepository @Inject constructor(
 ) {
     val responseLiveData: MutableLiveData<Status> = MutableLiveData()
 
-    fun fetchBooks(index: Int, maxResults: Int) {
-        fetchBooksFromRoomDB(index, maxResults)
-        fetchBooksFromApi(index, maxResults)
+    fun fetchBooks(query: String, index: Int, maxResults: Int) {
+//        fetchBooksFromRoomDB(index, maxResults)
+        fetchBooksFromApi(query, index, maxResults)
+        fetchBooksQuery(query)
+    }
+
+    private fun fetchBooksQuery(query: String) {
+        bookDao.getQuery("%$query%").observeForever {
+            responseLiveData.value = Status.Success(it)
+        }
     }
 
     private fun fetchBooksFromRoomDB(index: Int, maxResults: Int) {
@@ -31,9 +37,9 @@ class BooksRepository @Inject constructor(
         }
     }
 
-    private fun fetchBooksFromApi(index: Int, maxResults: Int) {
+    private fun fetchBooksFromApi(query: String, index: Int, maxResults: Int) {
         responseLiveData.value = Status.Loading
-        val call: Call<BookList>? = booksService.getBooks(index, maxResults)
+        val call: Call<BookList>? = booksService.getBooks(query, index, maxResults)
         call?.enqueue(object : Callback<BookList> {
             override fun onFailure(call: Call<BookList>?, t: Throwable?) {
                 t?.let {
