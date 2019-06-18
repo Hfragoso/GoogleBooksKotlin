@@ -1,8 +1,7 @@
-package com.example.googlebooks_kotlin.bookslanding.datamodel
+package com.example.googlebooks_kotlin.screens.bookslanding.datamodel
 
 import android.os.AsyncTask
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import com.example.googlebooks_kotlin.database.BookDao
 import com.example.googlebooks_kotlin.entities.BookList
 import com.example.googlebooks_kotlin.entities.Item
@@ -20,6 +19,7 @@ class BooksRepository @Inject constructor(
     val responseLiveData: MutableLiveData<Status> = MutableLiveData()
 
     fun fetchBooks(query: String, index: Int, maxResults: Int) {
+        responseLiveData.value = Status.Loading
         fetchBooksFromApi(query, index, maxResults)
         fetchBooksQuery(query)
     }
@@ -45,7 +45,6 @@ class BooksRepository @Inject constructor(
 //    }
 
     private fun fetchBooksFromApi(query: String, index: Int, maxResults: Int) {
-        responseLiveData.value = Status.Loading
         val call: Call<BookList>? = booksService.getBooks(query, index, maxResults)
         call?.enqueue(object : Callback<BookList> {
             override fun onFailure(call: Call<BookList>?, t: Throwable?) {
@@ -56,7 +55,9 @@ class BooksRepository @Inject constructor(
 
             override fun onResponse(call: Call<BookList>?, response: Response<BookList>?) {
                 response?.body()?.items?.let {
-                    InsertAsyncTask(bookDao).execute(it)
+                    InsertAsyncTask(
+                        bookDao
+                    ).execute(it)
                 }
             }
         })

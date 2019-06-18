@@ -1,4 +1,4 @@
-package com.example.googlebooks_kotlin.bookslanding.adapter
+package com.example.googlebooks_kotlin.screens.bookslanding.adapter
 
 import android.view.LayoutInflater
 import android.view.View

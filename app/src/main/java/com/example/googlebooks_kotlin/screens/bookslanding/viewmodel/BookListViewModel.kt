@@ -1,8 +1,8 @@
-package com.example.googlebooks_kotlin.bookslanding.viewmodel
+package com.example.googlebooks_kotlin.screens.bookslanding.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.example.googlebooks_kotlin.bookslanding.datamodel.BooksRepository
+import com.example.googlebooks_kotlin.screens.bookslanding.datamodel.BooksRepository
 import com.example.googlebooks_kotlin.utils.Status
 import javax.inject.Inject
 

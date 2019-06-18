@@ -12,9 +12,9 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".bookdetails.view.BookDetailsActivity">
+        <activity android:name=".screens.bookdetails.view.BookDetailsActivity">
         </activity>
-        <activity android:name=".bookslanding.view.BooksLandingActivity">
+        <activity android:name=".screens.bookslanding.view.BooksLandingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

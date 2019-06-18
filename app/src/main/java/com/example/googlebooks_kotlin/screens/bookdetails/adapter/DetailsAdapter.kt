@@ -1,4 +1,4 @@
-package com.example.googlebooks_kotlin.bookdetails.adapter
+package com.example.googlebooks_kotlin.screens.bookdetails.adapter
 
 import android.content.Context
 import android.view.LayoutInflater

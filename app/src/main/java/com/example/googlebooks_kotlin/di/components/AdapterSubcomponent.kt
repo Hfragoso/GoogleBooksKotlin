@@ -1,9 +1,9 @@
 package com.example.googlebooks_kotlin.di.components
 
-import com.example.googlebooks_kotlin.bookslanding.adapter.BooksAdapter
 import com.example.googlebooks_kotlin.di.modules.AdapterModule
 import com.example.googlebooks_kotlin.di.modules.RoomModule
 import com.example.googlebooks_kotlin.di.scopes.Activity
+import com.example.googlebooks_kotlin.screens.bookslanding.adapter.BooksAdapter
 import dagger.Subcomponent
 
 @Activity

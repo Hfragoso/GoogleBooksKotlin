@@ -2,10 +2,10 @@ package com.example.googlebooks_kotlin.di.modules
 
 import android.content.Context
 import android.content.Intent
-import com.example.googlebooks_kotlin.bookdetails.view.BookDetailsActivity
-import com.example.googlebooks_kotlin.bookslanding.adapter.BooksAdapter
 import com.example.googlebooks_kotlin.di.scopes.Activity
 import com.example.googlebooks_kotlin.entities.Item
+import com.example.googlebooks_kotlin.screens.bookdetails.view.BookDetailsActivity
+import com.example.googlebooks_kotlin.screens.bookslanding.adapter.BooksAdapter
 import dagger.Module
 import dagger.Provides
 

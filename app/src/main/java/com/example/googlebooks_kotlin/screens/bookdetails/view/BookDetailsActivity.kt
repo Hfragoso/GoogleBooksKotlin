@@ -1,11 +1,11 @@
-package com.example.googlebooks_kotlin.bookdetails.view
+package com.example.googlebooks_kotlin.screens.bookdetails.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.googlebooks_kotlin.R
-import com.example.googlebooks_kotlin.bookslanding.adapter.BooksAdapter
-import com.example.googlebooks_kotlin.bookdetails.adapter.DetailsAdapter
 import com.example.googlebooks_kotlin.entities.Item
+import com.example.googlebooks_kotlin.screens.bookdetails.adapter.DetailsAdapter
+import com.example.googlebooks_kotlin.screens.bookslanding.adapter.BooksAdapter
 import kotlinx.android.synthetic.main.activity_book_details.*
 
 class BookDetailsActivity : AppCompatActivity() {
@@ -23,7 +23,10 @@ class BookDetailsActivity : AppCompatActivity() {
 
     private fun displayDetails() {
         detailsAdapter =
-            DetailsAdapter(bookList, this@BookDetailsActivity)
+            DetailsAdapter(
+                bookList,
+                this@BookDetailsActivity
+            )
         viewPager.adapter = detailsAdapter
         viewPager.currentItem = selectedBook
     }

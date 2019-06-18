@@ -1,4 +1,4 @@
-package com.example.googlebooks_kotlin.bookslanding.view
+package com.example.googlebooks_kotlin.screens.bookslanding.view
 
 import android.os.Bundle
 import android.widget.Toast
@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
-import com.example.googlebooks_kotlin.bookslanding.adapter.BooksAdapter
-import com.example.googlebooks_kotlin.bookslanding.viewmodel.BookListViewModel
+import com.example.googlebooks_kotlin.screens.bookslanding.adapter.BooksAdapter
+import com.example.googlebooks_kotlin.screens.bookslanding.viewmodel.BookListViewModel
 import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.utils.App
 import com.example.googlebooks_kotlin.utils.Status
@@ -48,7 +48,10 @@ class BooksLandingActivity : AppCompatActivity() {
         search_bar.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    bookListViewModel.fetchBooks(query, 0, MAX_RESULTS)
+                    bookListViewModel.fetchBooks(
+                        query, 0,
+                        MAX_RESULTS
+                    )
                 }
                 return false
             }
@@ -62,9 +65,10 @@ class BooksLandingActivity : AppCompatActivity() {
 
     private fun setUpBooksObserver() {
         bookListViewModel.booksData.observe(this, Observer { status ->
+            @Suppress("UNCHECKED_CAST")
             when (status) {
                 is Status.Loading -> showProgressBar()
-                is Status.Success -> handleBooks(status.data)
+                is Status.Success<*> -> handleBooks(status.data as List<Item>)
                 is Status.Error -> showError(status.throwable)
             }
         })
@@ -76,7 +80,11 @@ class BooksLandingActivity : AppCompatActivity() {
     }
 
     private fun fetchBooksLiveDataObserver(index: Int) {
-        bookListViewModel.fetchBooks(search_bar.query.toString(), index, MAX_RESULTS)
+        bookListViewModel.fetchBooks(
+            search_bar.query.toString(),
+            index,
+            MAX_RESULTS
+        )
     }
 
     private fun showError(throwable: Throwable) {
