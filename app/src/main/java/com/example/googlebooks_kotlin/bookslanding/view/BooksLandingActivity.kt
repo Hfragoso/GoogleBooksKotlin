@@ -31,7 +31,7 @@ class BooksLandingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        var component = App.getApplication(this).component
+        val component = App.getApplication(this).component
         component.doInjection(this)
         booksAdapter = component
             .adapterSubcomponentBuilder()

@@ -9,9 +9,6 @@ import com.google.gson.reflect.TypeToken
 
 class VolumeInfoTypeConverter {
 
-//    @Inject
-//    lateinit var gson: Gson
-
     var gson = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).setLenient().create()
 
     @TypeConverter

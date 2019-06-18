@@ -13,6 +13,9 @@ interface BookDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(item: Item)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertList(vararg item: Item)
+
     @Query("SELECT * FROM item_table WHERE volumeInfo LIKE :query")
     fun getQuery(query: String): LiveData<List<Item>>
 

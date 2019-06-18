@@ -2,6 +2,7 @@ package com.example.googlebooks_kotlin.bookslanding.datamodel
 
 import android.os.AsyncTask
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.example.googlebooks_kotlin.database.BookDao
 import com.example.googlebooks_kotlin.entities.BookList
 import com.example.googlebooks_kotlin.entities.Item
@@ -19,7 +20,6 @@ class BooksRepository @Inject constructor(
     val responseLiveData: MutableLiveData<Status> = MutableLiveData()
 
     fun fetchBooks(query: String, index: Int, maxResults: Int) {
-//        fetchBooksFromRoomDB(index, maxResults)
         fetchBooksFromApi(query, index, maxResults)
         fetchBooksQuery(query)
     }
@@ -30,12 +30,19 @@ class BooksRepository @Inject constructor(
         }
     }
 
-    private fun fetchBooksFromRoomDB(index: Int, maxResults: Int) {
-        bookDao.allBooks.observeForever {
-            if (it.isNotEmpty())
-                responseLiveData.value = Status.Success(it)
-        }
-    }
+//    private fun fetchBooksQuery(query: String) {
+//        Transformations.switchMap(bookDao.getQuery("%$query%")) {
+//            responseLiveData.value = Status.Success(it)
+//            responseLiveData
+//        }
+//    }
+
+//    private fun fetchBooksFromRoomDB(index: Int, maxResults: Int) {
+//        bookDao.allBooks.observeForever {
+//            if (it.isNotEmpty())
+//                responseLiveData.value = Status.Success(it)
+//        }
+//    }
 
     private fun fetchBooksFromApi(query: String, index: Int, maxResults: Int) {
         responseLiveData.value = Status.Loading
@@ -59,8 +66,9 @@ class BooksRepository @Inject constructor(
         private class InsertAsyncTask(private val bookDao: BookDao) :
             AsyncTask<List<Item>, Void, Void>() {
             override fun doInBackground(vararg bookList: List<Item>?): Void? {
-                bookList[0]?.forEach {
-                    bookDao.insert(it)
+                val items = bookList.firstOrNull()?.toTypedArray()
+                items?.let {
+                    bookDao.insertList(*it)
                 }
 
                 return null
