@@ -7,10 +7,14 @@ import com.example.googlebooks_kotlin.utils.Status
 import javax.inject.Inject
 
 
-class BookLandingViewModel @Inject constructor(private val repository: BooksRepository) : ViewModel() {
+class BooksLandingViewModel @Inject constructor(private val repository: BooksRepository) : ViewModel() {
     var booksData: LiveData<Status> = repository.booksMediatorLiveData
 
-    fun fetchBooks(query: String, index: Int, maxResults: Int) {
-        repository.fetchBooks(query, index, maxResults)
+    fun fetchAllBooks(query: String, index: Int, maxResults: Int) {
+        repository.fetchAllBooks(query, index, maxResults)
+    }
+
+    fun autoCompleteFromDB(query: String) {
+        repository.autoCompleteFromDB(query)
     }
 }

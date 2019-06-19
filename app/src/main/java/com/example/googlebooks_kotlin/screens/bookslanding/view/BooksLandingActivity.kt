@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
 import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.screens.bookslanding.adapter.BooksLandingAdapter
-import com.example.googlebooks_kotlin.screens.bookslanding.viewmodel.BookLandingViewModel
+import com.example.googlebooks_kotlin.screens.bookslanding.viewmodel.BooksLandingViewModel
 import com.example.googlebooks_kotlin.utils.App
 import com.example.googlebooks_kotlin.utils.Status
 import com.example.googlebooks_kotlin.utils.ViewModelFactory
@@ -26,7 +26,7 @@ class BooksLandingActivity : AppCompatActivity() {
 
     lateinit var booksLandingAdapter: BooksLandingAdapter
 
-    private lateinit var bookLandingViewModel: BookLandingViewModel
+    private lateinit var booksLandingViewModel: BooksLandingViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +38,7 @@ class BooksLandingActivity : AppCompatActivity() {
             .build()
             .buildAdapter()
         setUpOnScrollListener()
-        bookLandingViewModel = ViewModelProviders.of(this, viewModelFactory)[BookLandingViewModel::class.java]
+        booksLandingViewModel = ViewModelProviders.of(this, viewModelFactory)[BooksLandingViewModel::class.java]
         setuUpSearchView()
         setUpBooksObserver()
         setUpRecyclerView()
@@ -48,7 +48,7 @@ class BooksLandingActivity : AppCompatActivity() {
         search_bar.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    bookLandingViewModel.fetchBooks(
+                    booksLandingViewModel.fetchAllBooks(
                         query, 0,
                         MAX_RESULTS
                     )
@@ -57,6 +57,9 @@ class BooksLandingActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let {
+                    booksLandingViewModel.autoCompleteFromDB(it)
+                }
                 return false
             }
 
@@ -64,7 +67,7 @@ class BooksLandingActivity : AppCompatActivity() {
     }
 
     private fun setUpBooksObserver() {
-        bookLandingViewModel.booksData.observe(this, Observer { status ->
+        booksLandingViewModel.booksData.observe(this, Observer { status ->
             when (status) {
                 is Status.Loading -> showProgressBar()
                 is Status.Success<*> -> handleBooks(status.data as List<Item>)
@@ -79,7 +82,7 @@ class BooksLandingActivity : AppCompatActivity() {
     }
 
     private fun fetchBooksLiveDataObserver(index: Int) {
-        bookLandingViewModel.fetchBooks(
+        booksLandingViewModel.fetchAllBooks(
             search_bar.query.toString(),
             index,
             MAX_RESULTS

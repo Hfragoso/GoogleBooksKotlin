@@ -25,9 +25,13 @@ class BooksRepository @Inject constructor(
         }
     }
 
-    fun fetchBooks(query: String, index: Int, maxResults: Int) {
+    fun fetchAllBooks(query: String, index: Int, maxResults: Int) {
         responseLiveData.value = Status.Loading
         fetchBooksFromApi(query, index, maxResults)
+        fetchBooksQuery(query)
+    }
+
+    fun autoCompleteFromDB(query: String) {
         fetchBooksQuery(query)
     }
 
