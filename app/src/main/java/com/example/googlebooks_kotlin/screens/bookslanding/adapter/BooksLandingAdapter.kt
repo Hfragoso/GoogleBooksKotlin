@@ -9,10 +9,10 @@ import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.utils.loadImage
 import kotlinx.android.synthetic.main.book_item.view.*
 
-class BooksAdapter(
+class BooksLandingAdapter(
     private val onClickListener: (myBookList: List<Item>, position: Int) -> Unit
 ) :
-    RecyclerView.Adapter<BooksAdapter.BooksViewHolder>() {
+    RecyclerView.Adapter<BooksLandingAdapter.BooksViewHolder>() {
 
     companion object {
         const val EXTRA_SELECTED_POSITION: String = "com.example.googlebooks.EXTRA_SELECTED_POSITION"

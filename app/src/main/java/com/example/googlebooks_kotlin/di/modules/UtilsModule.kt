@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.example.googlebooks_kotlin.database.BookDao
 import com.example.googlebooks_kotlin.database.BookRoomDatabase
-import com.example.googlebooks_kotlin.screens.bookslanding.datamodel.BooksRepository
+import com.example.googlebooks_kotlin.utils.BooksRepository
 import com.example.googlebooks_kotlin.utils.BooksService
 import com.example.googlebooks_kotlin.utils.ViewModelFactory
 import dagger.Module
