@@ -1,4 +1,4 @@
-package com.example.googlebooks_kotlin.screens.bookslanding.datamodel
+package com.example.googlebooks_kotlin.utils
 
 import android.os.AsyncTask
 import androidx.lifecycle.MediatorLiveData
@@ -7,8 +7,6 @@ import androidx.lifecycle.Transformations
 import com.example.googlebooks_kotlin.database.BookDao
 import com.example.googlebooks_kotlin.entities.BookList
 import com.example.googlebooks_kotlin.entities.Item
-import com.example.googlebooks_kotlin.utils.BooksService
-import com.example.googlebooks_kotlin.utils.Status
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

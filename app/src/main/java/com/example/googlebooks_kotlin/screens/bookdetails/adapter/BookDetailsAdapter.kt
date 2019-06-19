@@ -10,7 +10,7 @@ import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.utils.loadImage
 import kotlinx.android.synthetic.main.book_detail_page.view.*
 
-class DetailsAdapter(private val bookList: List<Item>, private val context: Context) : PagerAdapter() {
+class BookDetailsAdapter(private val bookList: List<Item>, private val context: Context) : PagerAdapter() {
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view === `object`
     }

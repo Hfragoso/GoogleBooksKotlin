@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
 import com.example.googlebooks_kotlin.entities.Item
-import com.example.googlebooks_kotlin.screens.bookslanding.adapter.BooksAdapter
-import com.example.googlebooks_kotlin.screens.bookslanding.viewmodel.BookListViewModel
+import com.example.googlebooks_kotlin.screens.bookslanding.adapter.BooksLandingAdapter
+import com.example.googlebooks_kotlin.screens.bookslanding.viewmodel.BookLandingViewModel
 import com.example.googlebooks_kotlin.utils.App
 import com.example.googlebooks_kotlin.utils.Status
 import com.example.googlebooks_kotlin.utils.ViewModelFactory
@@ -24,21 +24,21 @@ class BooksLandingActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    lateinit var booksAdapter: BooksAdapter
+    lateinit var booksLandingAdapter: BooksLandingAdapter
 
-    private lateinit var bookListViewModel: BookListViewModel
+    private lateinit var bookLandingViewModel: BookLandingViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val component = App.getApplication(this).component
         component.doInjection(this)
-        booksAdapter = component
+        booksLandingAdapter = component
             .adapterSubcomponentBuilder()
             .build()
             .buildAdapter()
         setUpOnScrollListener()
-        bookListViewModel = ViewModelProviders.of(this, viewModelFactory)[BookListViewModel::class.java]
+        bookLandingViewModel = ViewModelProviders.of(this, viewModelFactory)[BookLandingViewModel::class.java]
         setuUpSearchView()
         setUpBooksObserver()
         setUpRecyclerView()
@@ -48,7 +48,7 @@ class BooksLandingActivity : AppCompatActivity() {
         search_bar.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    bookListViewModel.fetchBooks(
+                    bookLandingViewModel.fetchBooks(
                         query, 0,
                         MAX_RESULTS
                     )
@@ -64,7 +64,7 @@ class BooksLandingActivity : AppCompatActivity() {
     }
 
     private fun setUpBooksObserver() {
-        bookListViewModel.booksData.observe(this, Observer { status ->
+        bookLandingViewModel.booksData.observe(this, Observer { status ->
             when (status) {
                 is Status.Loading -> showProgressBar()
                 is Status.Success<*> -> handleBooks(status.data as List<Item>)
@@ -75,11 +75,11 @@ class BooksLandingActivity : AppCompatActivity() {
 
     private fun setUpRecyclerView() {
         booksRecyclerView.layoutManager = GridLayoutManager(this, 3)
-        booksRecyclerView.adapter = booksAdapter
+        booksRecyclerView.adapter = booksLandingAdapter
     }
 
     private fun fetchBooksLiveDataObserver(index: Int) {
-        bookListViewModel.fetchBooks(
+        bookLandingViewModel.fetchBooks(
             search_bar.query.toString(),
             index,
             MAX_RESULTS
@@ -104,7 +104,7 @@ class BooksLandingActivity : AppCompatActivity() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_INDICATOR_BOTTOM) {
-                    val index = booksAdapter.indexCounter
+                    val index = booksLandingAdapter.indexCounter
                     fetchBooksLiveDataObserver(index)
                 }
 
@@ -115,6 +115,6 @@ class BooksLandingActivity : AppCompatActivity() {
     }
 
     private fun setAdapterData(data: List<Item>) {
-        booksAdapter.updateBookList(data as MutableList<Item>)
+        booksLandingAdapter.updateBookList(data as MutableList<Item>)
     }
 }
