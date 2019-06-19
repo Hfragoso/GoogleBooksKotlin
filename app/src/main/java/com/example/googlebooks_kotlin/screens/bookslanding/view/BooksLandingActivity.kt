@@ -8,9 +8,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
+import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.screens.bookslanding.adapter.BooksAdapter
 import com.example.googlebooks_kotlin.screens.bookslanding.viewmodel.BookListViewModel
-import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.utils.App
 import com.example.googlebooks_kotlin.utils.Status
 import com.example.googlebooks_kotlin.utils.ViewModelFactory
@@ -65,7 +65,6 @@ class BooksLandingActivity : AppCompatActivity() {
 
     private fun setUpBooksObserver() {
         bookListViewModel.booksData.observe(this, Observer { status ->
-            @Suppress("UNCHECKED_CAST")
             when (status) {
                 is Status.Loading -> showProgressBar()
                 is Status.Success<*> -> handleBooks(status.data as List<Item>)

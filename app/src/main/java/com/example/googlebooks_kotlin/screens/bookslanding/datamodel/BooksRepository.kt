@@ -1,7 +1,9 @@
 package com.example.googlebooks_kotlin.screens.bookslanding.datamodel
 
 import android.os.AsyncTask
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.example.googlebooks_kotlin.database.BookDao
 import com.example.googlebooks_kotlin.entities.BookList
 import com.example.googlebooks_kotlin.entities.Item
@@ -16,7 +18,14 @@ class BooksRepository @Inject constructor(
     private val booksService: BooksService,
     private val bookDao: BookDao
 ) {
-    val responseLiveData: MutableLiveData<Status> = MutableLiveData()
+    private val responseLiveData: MutableLiveData<Status> = MutableLiveData()
+    val booksMediatorLiveData = MediatorLiveData<Status>()
+
+    init {
+        booksMediatorLiveData.addSource(responseLiveData) {
+            booksMediatorLiveData.value = it
+        }
+    }
 
     fun fetchBooks(query: String, index: Int, maxResults: Int) {
         responseLiveData.value = Status.Loading
@@ -25,24 +34,14 @@ class BooksRepository @Inject constructor(
     }
 
     private fun fetchBooksQuery(query: String) {
-        bookDao.getQuery("%$query%").observeForever {
+        val transformed = Transformations.switchMap(bookDao.getQuery("%$query%")) {
             responseLiveData.value = Status.Success(it)
+            responseLiveData
+        }
+        booksMediatorLiveData.addSource(transformed) {
+            booksMediatorLiveData.value = it
         }
     }
-
-//    private fun fetchBooksQuery(query: String) {
-//        Transformations.switchMap(bookDao.getQuery("%$query%")) {
-//            responseLiveData.value = Status.Success(it)
-//            responseLiveData
-//        }
-//    }
-
-//    private fun fetchBooksFromRoomDB(index: Int, maxResults: Int) {
-//        bookDao.allBooks.observeForever {
-//            if (it.isNotEmpty())
-//                responseLiveData.value = Status.Success(it)
-//        }
-//    }
 
     private fun fetchBooksFromApi(query: String, index: Int, maxResults: Int) {
         val call: Call<BookList>? = booksService.getBooks(query, index, maxResults)

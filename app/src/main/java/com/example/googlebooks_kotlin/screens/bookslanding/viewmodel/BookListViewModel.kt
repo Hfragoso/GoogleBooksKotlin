@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 
 class BookListViewModel @Inject constructor(private val repository: BooksRepository) : ViewModel() {
-    var booksData: LiveData<Status> = repository.responseLiveData
+    var booksData: LiveData<Status> = repository.booksMediatorLiveData
 
     fun fetchBooks(query: String, index: Int, maxResults: Int) {
         repository.fetchBooks(query, index, maxResults)

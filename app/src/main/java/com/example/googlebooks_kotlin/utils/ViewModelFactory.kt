@@ -11,7 +11,6 @@ constructor(private val repository: BooksRepository) : ViewModelProvider.Factory
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(BookListViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
             BookListViewModel(repository) as T
         } else {
             throw IllegalArgumentException("Unknown class name")
