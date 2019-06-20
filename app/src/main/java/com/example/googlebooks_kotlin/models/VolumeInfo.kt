@@ -1,10 +1,7 @@
 package com.example.googlebooks_kotlin.models
 
-import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
 
-@Parcelize
 data class VolumeInfo(
     @SerializedName("title")
     val title: String?,
@@ -16,4 +13,4 @@ data class VolumeInfo(
     val publishedDate: String?,
     @SerializedName("imageLinks")
     val imageLinks: ImageLinks?
-) : Parcelable
+)
