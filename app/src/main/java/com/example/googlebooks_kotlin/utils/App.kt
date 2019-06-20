@@ -5,6 +5,7 @@ import android.app.Application
 import com.example.googlebooks_kotlin.di.components.AppComponent
 import com.example.googlebooks_kotlin.di.components.DaggerAppComponent
 import com.example.googlebooks_kotlin.di.modules.ContextModule
+import com.facebook.stetho.Stetho
 
 class App : Application() {
 
@@ -12,6 +13,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Stetho.initializeWithDefaults(this)
         component = DaggerAppComponent
             .builder()
             .contextModule(ContextModule(this))

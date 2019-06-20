@@ -1,12 +1,16 @@
 package com.example.googlebooks_kotlin.utils
 
 import android.os.AsyncTask
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.example.googlebooks_kotlin.database.BookDao
-import com.example.googlebooks_kotlin.entities.BookList
-import com.example.googlebooks_kotlin.entities.Item
+import com.example.googlebooks_kotlin.database.entities.AuthorEntity
+import com.example.googlebooks_kotlin.database.entities.BookAuthorEntity
+import com.example.googlebooks_kotlin.database.entities.BookEntity
+import com.example.googlebooks_kotlin.models.BookList
+import com.example.googlebooks_kotlin.models.Item
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,7 +40,7 @@ class BooksRepository @Inject constructor(
     }
 
     private fun fetchBooksQuery(query: String) {
-        val transformed = Transformations.switchMap(bookDao.getQuery("%$query%")) {
+        val transformed = Transformations.switchMap(bookDao.getBooks("%$query%")) {
             responseLiveData.value = Status.Success(it)
             responseLiveData
         }
@@ -64,13 +68,50 @@ class BooksRepository @Inject constructor(
         })
     }
 
+    fun fetchAuthorsByBook(bookId: String): LiveData<List<AuthorEntity>> {
+        return bookDao.getAuthorsByBookId(bookId)
+    }
+
     companion object {
+        fun getBookEntityFromItem(item: Item): BookEntity {
+            return BookEntity(
+                item.id,
+                item.volumeInfo?.title,
+                item.volumeInfo?.description,
+                item.volumeInfo?.publishedDate,
+                item.volumeInfo?.imageLinks?.thumbnail
+            )
+        }
+
+        fun getAuthorsList(bookList: Item): Array<AuthorEntity> {
+            val authors = mutableListOf<AuthorEntity>()
+
+            bookList.volumeInfo?.authors.let { authorList ->
+                authorList?.forEach {
+                    val author = AuthorEntity(0, it)
+                    authors.add(author)
+                }
+            }
+
+            return authors.toTypedArray()
+        }
+
         private class InsertAsyncTask(private val bookDao: BookDao) :
             AsyncTask<List<Item>, Void, Void>() {
             override fun doInBackground(vararg bookList: List<Item>?): Void? {
                 val items = bookList.firstOrNull()?.toTypedArray()
-                items?.let {
-                    bookDao.insertList(*it)
+                items?.let { itemList ->
+
+                    itemList.forEach { book ->
+                        val authorsId = bookDao.insertAuthors(*getAuthorsList(book))
+                        bookDao.insertBook(getBookEntityFromItem(book))
+                        val booksAuthors = mutableListOf<BookAuthorEntity>()
+                        authorsId.forEach {
+                            val bookAuthor = BookAuthorEntity(0, book.id, it.toInt())
+                            booksAuthors.add(bookAuthor)
+                        }
+                        bookDao.insertBookAuthorList(*booksAuthors.toTypedArray())
+                    }
                 }
 
                 return null

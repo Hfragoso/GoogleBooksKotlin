@@ -1,4 +1,4 @@
-package com.example.googlebooks_kotlin.entities
+package com.example.googlebooks_kotlin.models
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName

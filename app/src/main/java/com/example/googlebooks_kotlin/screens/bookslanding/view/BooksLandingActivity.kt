@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
-import com.example.googlebooks_kotlin.entities.Item
+import com.example.googlebooks_kotlin.database.entities.BookEntity
 import com.example.googlebooks_kotlin.screens.bookslanding.adapter.BooksLandingAdapter
 import com.example.googlebooks_kotlin.screens.bookslanding.viewmodel.BooksLandingViewModel
 import com.example.googlebooks_kotlin.utils.App
@@ -37,6 +37,7 @@ class BooksLandingActivity : AppCompatActivity() {
             .adapterSubcomponentBuilder()
             .build()
             .buildAdapter()
+
         setUpOnScrollListener()
         booksLandingViewModel = ViewModelProviders.of(this, viewModelFactory)[BooksLandingViewModel::class.java]
         setuUpSearchView()
@@ -70,7 +71,7 @@ class BooksLandingActivity : AppCompatActivity() {
         booksLandingViewModel.booksData.observe(this, Observer { status ->
             when (status) {
                 is Status.Loading -> showProgressBar()
-                is Status.Success<*> -> handleBooks(status.data as List<Item>)
+                is Status.Success<*> -> handleBooks(status.data as List<BookEntity>)
                 is Status.Error -> showError(status.throwable)
             }
         })
@@ -93,7 +94,7 @@ class BooksLandingActivity : AppCompatActivity() {
         Toast.makeText(this@BooksLandingActivity, "Error: ${throwable.message}", Toast.LENGTH_LONG).show()
     }
 
-    private fun handleBooks(data: List<Item>) {
+    private fun handleBooks(data: List<BookEntity>) {
         setAdapterData(data)
     }
 
@@ -117,7 +118,7 @@ class BooksLandingActivity : AppCompatActivity() {
         booksRecyclerView.addOnScrollListener(scrollListener)
     }
 
-    private fun setAdapterData(data: List<Item>) {
-        booksLandingAdapter.updateBookList(data as MutableList<Item>)
+    private fun setAdapterData(data: List<BookEntity>) {
+        booksLandingAdapter.updateBookList(data as MutableList<BookEntity>)
     }
 }
