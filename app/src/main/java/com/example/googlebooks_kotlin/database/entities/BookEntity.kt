@@ -13,11 +13,14 @@ data class BookEntity(
     @ColumnInfo(name = "book_id")
     val id: String,
     @ColumnInfo(name = "book_title")
-    var title: String?,
+    val title: String?,
     @ColumnInfo(name = "book_description")
-    var description: String?,
+    val description: String?,
     @ColumnInfo(name = "book_published_date")
-    var publishedDate: String?,
+    val publishedDate: String?,
     @ColumnInfo(name = "book_thumbnail")
-    var thumbnail: String?
+    val thumbnail: String?
+//    ,
+//    @Ignore
+//    var authors: List<AuthorEntity> = emptyList()
 ) : Parcelable

@@ -20,17 +20,20 @@ class BooksRepository @Inject constructor(
     private val booksService: BooksService,
     private val bookDao: BookDao
 ) {
-    private val responseLiveData: MutableLiveData<Status> = MutableLiveData()
-    val booksMediatorLiveData = MediatorLiveData<Status>()
+    private val queryLiveData: MutableLiveData<String> = MutableLiveData()
+    private val bookListLiveData: LiveData<List<BookEntity>> = Transformations.switchMap(queryLiveData) { query ->
+        Transformations.map(bookDao.getBooks("%$query%")) { it }
+    }
+    val statusMediatorLiveData = MediatorLiveData<Status<List<BookEntity>>>()
 
     init {
-        booksMediatorLiveData.addSource(responseLiveData) {
-            booksMediatorLiveData.value = it
+        statusMediatorLiveData.addSource(bookListLiveData) {
+            statusMediatorLiveData.value = Status.Success(it)
         }
     }
 
     fun fetchAllBooks(query: String, index: Int, maxResults: Int) {
-        responseLiveData.value = Status.Loading
+        statusMediatorLiveData.value = Status.Loading()
         fetchBooksFromApi(query, index, maxResults)
         fetchBooksQuery(query)
     }
@@ -40,13 +43,7 @@ class BooksRepository @Inject constructor(
     }
 
     private fun fetchBooksQuery(query: String) {
-        val transformed = Transformations.switchMap(bookDao.getBooks("%$query%")) {
-            responseLiveData.value = Status.Success(it)
-            responseLiveData
-        }
-        booksMediatorLiveData.addSource(transformed) {
-            booksMediatorLiveData.value = it
-        }
+        queryLiveData.value = query
     }
 
     private fun fetchBooksFromApi(query: String, index: Int, maxResults: Int) {
@@ -54,7 +51,7 @@ class BooksRepository @Inject constructor(
         call?.enqueue(object : Callback<BookList> {
             override fun onFailure(call: Call<BookList>?, t: Throwable?) {
                 t?.let {
-                    responseLiveData.value = Status.Error(it)
+                    statusMediatorLiveData.value = Status.Error(it)
                 }
             }
 

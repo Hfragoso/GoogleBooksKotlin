@@ -1,7 +1,7 @@
 package com.example.googlebooks_kotlin.utils
 
-sealed class Status {
-    object Loading : Status()
-    data class Error(val throwable: Throwable) : Status()
-    data class Success<T>(val data: T) : Status()
+sealed class Status <T>{
+    class Loading<T> : Status<T>()
+    data class Error<T>(val throwable: Throwable) : Status<T>()
+    data class Success<T>(val data: T) : Status<T>()
 }

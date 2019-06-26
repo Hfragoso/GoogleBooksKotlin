@@ -71,7 +71,7 @@ class BooksLandingActivity : AppCompatActivity() {
         booksLandingViewModel.booksData.observe(this, Observer { status ->
             when (status) {
                 is Status.Loading -> showProgressBar()
-                is Status.Success<*> -> handleBooks(status.data as List<BookEntity>)
+                is Status.Success -> handleBooks(status.data)
                 is Status.Error -> showError(status.throwable)
             }
         })
