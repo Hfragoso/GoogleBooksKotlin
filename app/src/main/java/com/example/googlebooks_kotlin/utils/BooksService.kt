@@ -1,6 +1,6 @@
 package com.example.googlebooks_kotlin.utils
 
-import com.example.googlebooks_kotlin.entities.BookList
+import com.example.googlebooks_kotlin.models.BookList
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

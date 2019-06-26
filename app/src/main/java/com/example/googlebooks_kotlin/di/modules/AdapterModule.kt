@@ -2,8 +2,8 @@ package com.example.googlebooks_kotlin.di.modules
 
 import android.content.Context
 import android.content.Intent
+import com.example.googlebooks_kotlin.database.entities.BookEntity
 import com.example.googlebooks_kotlin.di.scopes.Activity
-import com.example.googlebooks_kotlin.entities.Item
 import com.example.googlebooks_kotlin.screens.bookdetails.view.BookDetailsActivity
 import com.example.googlebooks_kotlin.screens.bookslanding.adapter.BooksLandingAdapter
 import dagger.Module
@@ -22,7 +22,7 @@ class AdapterModule {
             )
             intent.putExtra(
                 BooksLandingAdapter.EXTRA_BOOK_LIST,
-                adapterBookList as ArrayList<Item>
+                adapterBookList as ArrayList<BookEntity>
             )
             context.startActivity(intent)
         }

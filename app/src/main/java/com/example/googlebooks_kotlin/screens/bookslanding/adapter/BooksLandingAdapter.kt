@@ -5,12 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooks_kotlin.R
-import com.example.googlebooks_kotlin.entities.Item
+import com.example.googlebooks_kotlin.database.entities.BookEntity
 import com.example.googlebooks_kotlin.utils.loadImage
 import kotlinx.android.synthetic.main.book_item.view.*
 
 class BooksLandingAdapter(
-    private val onClickListener: (myBookList: List<Item>, position: Int) -> Unit
+    private val onClickListener: (myBookList: List<BookEntity>, position: Int) -> Unit
 ) :
     RecyclerView.Adapter<BooksLandingAdapter.BooksViewHolder>() {
 
@@ -19,11 +19,11 @@ class BooksLandingAdapter(
         const val EXTRA_BOOK_LIST = "com.example.googlebooks.EXTRA_BOOK_LIST"
     }
 
-    private var myBookList: MutableList<Item> = mutableListOf()
+    private var myBookList: MutableList<BookEntity> = mutableListOf()
 
     var indexCounter = 0
 
-    fun updateBookList(data: MutableList<Item>) {
+    fun updateBookList(data: MutableList<BookEntity>) {
         myBookList = data
         indexCounter++
         notifyDataSetChanged()
@@ -45,16 +45,16 @@ class BooksLandingAdapter(
     class BooksViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(
-            bookList: MutableList<Item>,
+            bookList: MutableList<BookEntity>,
             position: Int,
-            onClickListener: (myBookList: List<Item>, position: Int) -> Unit
+            onClickListener: (myBookList: List<BookEntity>, position: Int) -> Unit
         ) {
             val book = bookList[position]
-            val imageUrl = book.volumeInfo?.imageLinks?.thumbnail
+            val imageUrl = book.thumbnail
 
             itemView.bookThumbnailImageView.loadImage(imageUrl)
-            itemView.bookTitleTextView.text = book.volumeInfo?.title
-            itemView.bookPublishedDateTextView.text = book.volumeInfo?.publishedDate
+            itemView.bookTitleTextView.text = book.title
+            itemView.bookPublishedDateTextView.text = book.publishedDate
             itemView.bookLayout.setOnClickListener {
                 onClickListener(bookList, position)
             }

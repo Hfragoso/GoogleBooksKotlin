@@ -6,11 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
 import com.example.googlebooks_kotlin.R
-import com.example.googlebooks_kotlin.entities.Item
+import com.example.googlebooks_kotlin.database.entities.AuthorEntity
+import com.example.googlebooks_kotlin.database.entities.BookEntity
 import com.example.googlebooks_kotlin.utils.loadImage
 import kotlinx.android.synthetic.main.book_detail_page.view.*
 
-class BookDetailsAdapter(private val bookList: List<Item>, private val context: Context) : PagerAdapter() {
+class BookDetailsAdapter(
+    private val bookList: List<BookEntity>,
+    private val context: Context,
+    private val getAuthors: (bookId: String) -> Unit
+) : PagerAdapter() {
+    private var authorList: MutableList<AuthorEntity> = mutableListOf()
+
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view === `object`
     }
@@ -20,25 +27,31 @@ class BookDetailsAdapter(private val bookList: List<Item>, private val context: 
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        getAuthors(bookList[position].id)
         val inflater = LayoutInflater.from(context)
         val layout = inflater.inflate(R.layout.book_detail_page, container, false) as ViewGroup
-        val volumeInfo = bookList[position].volumeInfo
-        val imageUrl = volumeInfo?.imageLinks?.thumbnail
+        val imageUrl = bookList[position].thumbnail
 
         layout.bookCover.loadImage(imageUrl)
-        layout.bookPublishedDate.text = volumeInfo?.publishedDate
-        layout.authors.text = formatAuthors(volumeInfo?.authors)
-        layout.description.text = volumeInfo?.description
+        layout.bookPublishedDate.text = bookList[position].publishedDate
+//        layout.authors.text = formatAuthors(bookList[position].authors)
+        layout.authors.text = formatAuthors(authorList)
+        layout.description.text = bookList[position].description
 
         container.addView(layout)
 
         return layout
     }
 
-    private fun formatAuthors(authors: List<String>?): String {
+    fun updateAuthors(newAuthors: MutableList<AuthorEntity>) {
+        authorList = newAuthors
+        notifyDataSetChanged()
+    }
+
+    private fun formatAuthors(authors: List<AuthorEntity>?): String {
         var result = ""
         for (author in authors ?: emptyList()) {
-            result = result.plus("$author, ")
+            result = result.plus("${author.name}, ")
         }
 
         return if (result.isNotEmpty())
