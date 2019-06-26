@@ -1,6 +1,5 @@
 package com.example.googlebooks_kotlin.utils
 
-import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,17 +8,17 @@ import com.example.googlebooks_kotlin.database.BookDao
 import com.example.googlebooks_kotlin.database.entities.AuthorEntity
 import com.example.googlebooks_kotlin.database.entities.BookAuthorEntity
 import com.example.googlebooks_kotlin.database.entities.BookEntity
-import com.example.googlebooks_kotlin.models.BookList
 import com.example.googlebooks_kotlin.models.Item
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class BooksRepository @Inject constructor(
     private val booksService: BooksService,
     private val bookDao: BookDao
 ) {
+    private var disposable = CompositeDisposable()
+
     private val queryLiveData: MutableLiveData<String> = MutableLiveData()
     private val bookListLiveData: LiveData<List<BookEntity>> = Transformations.switchMap(queryLiveData) { query ->
         Transformations.map(bookDao.getBooks("%$query%")) { it }
@@ -47,26 +46,33 @@ class BooksRepository @Inject constructor(
     }
 
     private fun fetchBooksFromApi(query: String, index: Int, maxResults: Int) {
-        val call: Call<BookList>? = booksService.getBooks(query, index, maxResults)
-        call?.enqueue(object : Callback<BookList> {
-            override fun onFailure(call: Call<BookList>?, t: Throwable?) {
-                t?.let {
-                    statusMediatorLiveData.value = Status.Error(it)
+        disposable.add(booksService.getBooks(query, index, maxResults)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .doOnSubscribe { statusMediatorLiveData.value = Status.Loading() }
+            .subscribe({
+                it.items?.let { itemList ->
+                    itemList.forEach { book ->
+                        val authorsId = bookDao.insertAuthors(*getAuthorsList(book))
+                        bookDao.insertBook(getBookEntityFromItem(book))
+                        val booksAuthors = mutableListOf<BookAuthorEntity>()
+                        authorsId.forEach { authorId ->
+                            val bookAuthor = BookAuthorEntity(0, book.id, authorId.toInt())
+                            booksAuthors.add(bookAuthor)
+                        }
+                        bookDao.insertBookAuthorList(*booksAuthors.toTypedArray())
+                    }
                 }
-            }
-
-            override fun onResponse(call: Call<BookList>?, response: Response<BookList>?) {
-                response?.body()?.items?.let {
-                    InsertAsyncTask(
-                        bookDao
-                    ).execute(it)
-                }
-            }
-        })
+            }, { throwable -> statusMediatorLiveData.value = Status.Error(throwable) })
+        )
     }
 
     fun fetchAuthorsByBook(bookId: String): LiveData<List<AuthorEntity>> {
         return bookDao.getAuthorsByBookId(bookId)
+    }
+
+    fun clearDisposable() {
+        disposable.clear()
     }
 
     companion object {
@@ -91,28 +97,6 @@ class BooksRepository @Inject constructor(
             }
 
             return authors.toTypedArray()
-        }
-
-        private class InsertAsyncTask(private val bookDao: BookDao) :
-            AsyncTask<List<Item>, Void, Void>() {
-            override fun doInBackground(vararg bookList: List<Item>?): Void? {
-                val items = bookList.firstOrNull()?.toTypedArray()
-                items?.let { itemList ->
-
-                    itemList.forEach { book ->
-                        val authorsId = bookDao.insertAuthors(*getAuthorsList(book))
-                        bookDao.insertBook(getBookEntityFromItem(book))
-                        val booksAuthors = mutableListOf<BookAuthorEntity>()
-                        authorsId.forEach {
-                            val bookAuthor = BookAuthorEntity(0, book.id, it.toInt())
-                            booksAuthors.add(bookAuthor)
-                        }
-                        bookDao.insertBookAuthorList(*booksAuthors.toTypedArray())
-                    }
-                }
-
-                return null
-            }
         }
     }
 }

@@ -18,4 +18,9 @@ class BooksLandingViewModel @Inject constructor(private val repository: BooksRep
     fun autoCompleteFromDB(query: String) {
         repository.autoCompleteFromDB(query)
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        repository.clearDisposable()
+    }
 }
